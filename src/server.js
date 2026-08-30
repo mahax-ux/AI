@@ -2,11 +2,11 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { Groq } from "groq-sdk";
-import Mem0 from "mem0ai";
+import Mem0 from "mem0ai"; 
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
 const groqApiKey = process.env.GROQ_API_KEY;
 if (!groqApiKey) {
@@ -18,7 +18,7 @@ const groq = new Groq({ apiKey: groqApiKey });
 
 // Initialize Mem0 Client
 const memory = new Mem0({
-  apiKey: process.env.MEM0_API_KEY, // Optional if running local OSS
+  apiKey: process.env.MEM0_API_KEY, 
 });
 
 // API Endpoint for chatting with Mahax + Mem0 Integration
@@ -31,34 +31,44 @@ app.post("/api/chat", async (req, res) => {
   const currentUserId = userId || "guest";
 
   try {
-    // 1. Search Mem0 for relevant past context/facts about this user
-    let contextualMemories = "";
+    // 1. Hybrid Retrieval: Fetch baseline profile AND query-specific context
+    let combinedMemories = [];
     try {
-      const searchResults = await memory.search(message, {
-        user_id: currentUserId,
-      });
-      if (searchResults && searchResults.length > 0) {
-        contextualMemories = searchResults.map((item) => `- ${item.memory}`).join("\n");
-      }
+      const [allMemories, searchResults] = await Promise.all([
+        memory.getAll({ filters: { user_id: currentUserId } }).catch(() => ({ results: [] })),
+        memory.search(message, { filters: { user_id: currentUserId } }).catch(() => ({ results: [] }))
+      ]);
+
+      const allArray = Array.isArray(allMemories) ? allMemories : allMemories?.results || [];
+      const searchArray = Array.isArray(searchResults) ? searchResults : searchResults?.results || [];
+
+      // Deduplicate facts to keep the prompt clean
+      const uniqueFacts = new Set([...allArray, ...searchArray].map(m => m.memory));
+      combinedMemories = Array.from(uniqueFacts);
     } catch (memErr) {
-      console.log("Mem0 search skipped/failed:", memErr.message);
+      console.log("Memory retrieval skipped:", memErr.message);
     }
 
-    // 2. Format chat history for Groq
+    // 2. Format chat history
     const chatMessages = messages && Array.isArray(messages) && messages.length > 0 
       ? messages.map(m => ({ role: m.role, content: m.content }))
       : [{ role: "user", content: message }];
 
-    // 3. Build dynamic system prompt incorporating Mem0 facts
-    let systemPrompt = `You are Mahax AI, an intelligent, helpful, and concise assistant built for Mahant. You are currently chatting with user: ${currentUserId}.`;
+    // 3. Conversational System Persona
+    const memoryString = combinedMemories.length > 0 
+      ? combinedMemories.map(f => `- ${f}`).join("\n") 
+      : "No past context available yet.";
+
+    const systemPrompt = `You are Mahax AI, an adaptive and conversational assistant built for Mahant. You are chatting with user: ${currentUserId}.
     
-    if (contextualMemories) {
-      systemPrompt += `\n\nHere is what you remember about this user from previous interactions:\n${contextualMemories}`;
-    }
+Your goal is to act like a true self-learning agent. Integrate the following facts about the user naturally into your conversation. Do not explicitly announce "I remember that you..." or "According to my memory...". Just use the context seamlessly to personalize your advice and tone.
+
+User Profile & Memories:
+${memoryString}`;
 
     // 4. Generate response via Groq
     const response = await groq.chat.completions.create({
-      model: "openai/gpt-oss-20b",
+      model: "openai/gpt-oss-20b", 
       messages: [
         { role: "system", content: systemPrompt },
         ...chatMessages
@@ -68,8 +78,8 @@ app.post("/api/chat", async (req, res) => {
 
     const agentReply = response.choices[0]?.message?.content || "I'm not sure how to respond.";
 
-    // 5. Asynchronously save this turn to Mem0 for future context learning
-    memory.add([
+    // 5. Synchronous Memory Extraction
+    await memory.add([
       { role: "user", content: message },
       { role: "assistant", content: agentReply }
     ], { user_id: currentUserId }).catch(err => console.error("Mem0 add error:", err));
@@ -84,5 +94,5 @@ app.post("/api/chat", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running locally at http://localhost:${PORT} with Mem0 active.`);
+  console.log(`🚀 Server running locally at http://localhost:${PORT} with Hybrid Memory active.`);
 });
