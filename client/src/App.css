@@ -147,7 +147,7 @@ body {
   100% {
     filter: brightness(1);
   }
-}ing light beam animation */
+}
 .home-title::after {
   content: "";
   position: absolute;
