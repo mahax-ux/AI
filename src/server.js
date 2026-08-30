@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { Groq } from "groq-sdk";
-import Mem0 from "mem0ai";
+import { MemoryClient } from "mem0ai"; // Updated import
 
 const app = express();
 app.use(express.json());
@@ -17,8 +17,8 @@ if (!groqApiKey) {
 const groq = new Groq({ apiKey: groqApiKey });
 
 // Initialize Mem0 Client
-const memory = new Mem0({
-  apiKey: process.env.MEM0_API_KEY, // Optional if running local OSS
+const memory = new MemoryClient({
+  apiKey: process.env.MEM0_API_KEY, 
 });
 
 // API Endpoint for chatting with Mahax + Mem0 Integration
@@ -34,8 +34,9 @@ app.post("/api/chat", async (req, res) => {
     // 1. Search Mem0 for relevant past context/facts about this user
     let contextualMemories = "";
     try {
+      // FIX 1: Wrap identifier in a filters object
       const searchResults = await memory.search(message, {
-        user_id: currentUserId,
+        filters: { user_id: currentUserId }
       });
       if (searchResults && searchResults.length > 0) {
         contextualMemories = searchResults.map((item) => `- ${item.memory}`).join("\n");
@@ -69,6 +70,7 @@ app.post("/api/chat", async (req, res) => {
     const agentReply = response.choices[0]?.message?.content || "I'm not sure how to respond.";
 
     // 5. Asynchronously save this turn to Mem0 for future context learning
+    // FIX 2: Correct payload format for Mem0 Cloud API
     memory.add([
       { role: "user", content: message },
       { role: "assistant", content: agentReply }
