@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { Groq } from "groq-sdk";
-import { MemoryClient } from "mem0ai";
+import Mem0 from "mem0ai";
 
 const app = express();
 app.use(express.json());
@@ -17,8 +17,8 @@ if (!groqApiKey) {
 const groq = new Groq({ apiKey: groqApiKey });
 
 // Initialize Mem0 Client
-const memory = new MemoryClient({
-  apiKey: process.env.MEM0_API_KEY, 
+const memory = new Mem0({
+  apiKey: process.env.MEM0_API_KEY, // Optional if running local OSS
 });
 
 // API Endpoint for chatting with Mahax + Mem0 Integration
@@ -31,21 +31,14 @@ app.post("/api/chat", async (req, res) => {
   const currentUserId = userId || "guest";
 
   try {
-    // 1. Search Mem0 (Enhance the query for better vector matching)
+    // 1. Search Mem0 for relevant past context/facts about this user
     let contextualMemories = "";
     try {
-      // Add general keywords to generic queries so vector search catches profile facts
-      const searchQuery = message.length < 15 ? `${message} user profile identity facts` : message;
-      
-      const searchResults = await memory.search(searchQuery, {
-        filters: { user_id: currentUserId }
+      const searchResults = await memory.search(message, {
+        user_id: currentUserId,
       });
-      
-      // Safely handle both array and object responses depending on the SDK version
-      const memArray = Array.isArray(searchResults) ? searchResults : searchResults?.results || searchResults?.memories || [];
-      
-      if (memArray && memArray.length > 0) {
-        contextualMemories = memArray.map((item) => `- ${item.memory}`).join("\n");
+      if (searchResults && searchResults.length > 0) {
+        contextualMemories = searchResults.map((item) => `- ${item.memory}`).join("\n");
       }
     } catch (memErr) {
       console.log("Mem0 search skipped/failed:", memErr.message);
@@ -60,12 +53,12 @@ app.post("/api/chat", async (req, res) => {
     let systemPrompt = `You are Mahax AI, an intelligent, helpful, and concise assistant built for Mahant. You are currently chatting with user: ${currentUserId}.`;
     
     if (contextualMemories) {
-      systemPrompt += `\n\nHere is what you know about this user from long-term memory:\n${contextualMemories}`;
+      systemPrompt += `\n\nHere is what you remember about this user from previous interactions:\n${contextualMemories}`;
     }
 
     // 4. Generate response via Groq
     const response = await groq.chat.completions.create({
-      model: "llama-3.1-8b-instant", // Supported Groq model ID
+      model: "openai/gpt-oss-20b",
       messages: [
         { role: "system", content: systemPrompt },
         ...chatMessages
@@ -75,8 +68,8 @@ app.post("/api/chat", async (req, res) => {
 
     const agentReply = response.choices[0]?.message?.content || "I'm not sure how to respond.";
 
-    // 5. AWAIT the save to ensure Mem0 finishes extracting facts before moving on
-    await memory.add([
+    // 5. Asynchronously save this turn to Mem0 for future context learning
+    memory.add([
       { role: "user", content: message },
       { role: "assistant", content: agentReply }
     ], { user_id: currentUserId }).catch(err => console.error("Mem0 add error:", err));
