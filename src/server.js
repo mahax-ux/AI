@@ -65,7 +65,7 @@ app.post("/api/chat", async (req, res) => {
 
     // 4. Generate response via Groq
     const response = await groq.chat.completions.create({
-      model: "llama3-8b-8192", // Supported Groq model ID
+      model: "llama-3.1-8b-instant", // Supported Groq model ID
       messages: [
         { role: "system", content: systemPrompt },
         ...chatMessages
