@@ -1,332 +1,170 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background-color: #030712;
-  color: #f3f4f6;
-  overflow-x: hidden;
-}
-/* Add this to your App.css file */
-
-.home-title {
-  position: relative;
-  display: inline-block;
-  padding: 16px 36px;
-  font-size: 2.5rem;
-  font-weight: 700;
-  
-  /* Text Gradient */
-  background: linear-gradient(135deg, #ffffff 0%, #a5d8ff 50%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  /* Glassmorphism background */
-  background-color: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 20px;
-  overflow: hidden;
-  
-  /* Glowing box shadow */
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25),
-              0 0 25px rgba(138, 196, 255, 0.3);
-}
-
-/* The sweeping light beam animation */
-.home-title::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.35) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: rotate(30deg);
-  animation: shine 3.5s infinite linear;
-  pointer-events: none;
-}
-
-@keyframes shine {
-  0% {
-    transform: translateY(-100%) translateX(-100%) rotate(30deg);
-  }
-  100% {
-    transform: translateY(100%) translateX(100%) rotate(30deg);
-  }
-}
-#root {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
+/* Base Layout & Reset */
+body, html {
   margin: 0;
   padding: 0;
-  max-width: none;
-  border: none;
-  text-align: left;
-}
-
-/* Home Screen Layout */
-/* Add this to your App.css file */
-
-.home-title {
-  position: relative;
-  display: inline-block;
-  padding: 16px 32px;
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #0d1117;
+  color: #fff;
 }
 
-/* Add or update this class in your App.css file */
-
+/* Dancing Text Banner */
 .dancing-banner {
   position: absolute;
-  top: 90px; /* Positioned nicely near the top-middle */
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 4px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #ffffff;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  padding: 0;
-  border: none;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9),
-               0 0 16px rgba(138, 196, 255, 0.8),
-               0 0 24px rgba(56, 118, 186, 0.6),
-               0 4px 6px rgba(0, 0, 0, 0.5);
-  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 8px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 20;
   pointer-events: none;
-  z-index: 1; /* Low z-index so it sits behind chat boxes and input bars */
+  white-space: nowrap;
 }
 
 .dancing-banner span {
   display: inline-block;
-  animation: bounceText 1.2s ease-in-out infinite, ccLightSweep 3s linear infinite;
+  animation: dance 1.5s ease-in-out infinite alternate;
 }
 
-@keyframes bounceText {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+@keyframes dance {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-4px); color: #8cbfe8; }
 }
 
-@keyframes ccLightSweep {
-  0% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.3);
-  }
-  100% {
-    filter: brightness(1);
-  }
-}
-.home-title::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.25) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: rotate(30deg);
-  animation: shine 4s infinite linear;
-  pointer-events: none;
-}
-
-@keyframes shine {
-  0% {
-    transform: translateY(-100%) translateX(-100%) rotate(30deg);
-  }
-  100% {
-    transform: translateY(100%) translateX(100%) rotate(30deg);
-  }
-}
+/* Home Screen */
 .home-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: 720px;
-  margin: auto;
-  z-index: 1;
+  height: 100%;
+  position: relative;
 }
 
 .title-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .home-title {
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 600;
-  background: linear-gradient(135deg, #ffffff 30%, #9ca3af 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   margin: 0;
-  letter-spacing: -0.02em;
-  filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.2));
 }
 
-/* Deep Glow Glass Search Bar */
+/* Search Bar & Inputs */
 .search-bar-container {
   width: 100%;
-  margin-bottom: 24px;
+  max-width: 600px;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .search-input-wrapper {
   display: flex;
   align-items: center;
-  background: rgba(17, 24, 39, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 24px;
-  padding: 14px 20px;
-  /* Deep Glow Effect */
-  box-shadow: 
-    0 0 30px rgba(56, 118, 186, 0.25),
-    0 0 60px rgba(56, 118, 186, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-input-wrapper:focus-within {
-  background: rgba(17, 24, 39, 0.75);
-  border-color: rgba(140, 191, 232, 0.8);
-  box-shadow: 
-    0 0 40px rgba(56, 118, 186, 0.4),
-    0 0 80px rgba(56, 118, 186, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 8px 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .search-input-wrapper input {
   flex: 1;
-  border: none;
   background: transparent;
-  font-size: 1rem;
+  border: none;
   outline: none;
-  color: #f3f4f6;
-  padding: 0 12px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 16px; /* 16px prevents iOS auto-zoom */
+  padding: 8px;
 }
 
 .search-input-wrapper input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
+/* Buttons */
 .new-chat-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #f3f4f6;
+  background: #3876ba;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
   padding: 8px 16px;
-  border-radius: 14px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .new-chat-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+  background: #2d5f96;
 }
 
-/* Deep Glow Chat Screen Container */
+.new-chat-btn:active {
+  transform: scale(0.97);
+}
+
+/* Chat Screen */
 .chat-screen {
   display: flex;
   flex-direction: column;
-  height: 85vh;
-  width: 90%;
-  max-width: 760px;
-  margin: auto;
-  background: rgba(17, 24, 39, 0.25);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 28px;
-  /* Multi-layered Deep Glow */
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.5),
-    0 0 50px rgba(56, 118, 186, 0.25),
-    0 0 100px rgba(56, 118, 186, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  overflow: hidden;
-  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .chat-header {
-  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(17, 24, 39, 0.35);
-  backdrop-filter: blur(16px);
+  padding: 15px 25px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 20;
 }
 
 .brand-badge {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-weight: 600;
-  font-size: 0.95rem;
-  color: #f3f4f6;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  font-size: 15px;
 }
 
 .pulse-dot {
   width: 8px;
   height: 8px;
-  background-color: #22c55e;
+  background-color: #2ecc71;
   border-radius: 50%;
-  box-shadow: 0 0 12px #22c55e, 0 0 24px #22c55e;
-  animation: pulse-dot 2s infinite;
+  box-shadow: 0 0 8px #2ecc71;
+  animation: pulse 2s infinite;
 }
 
-@keyframes pulse-dot {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.8); }
-  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
 }
 
+/* Messages Area */
 .messages-area {
   flex: 1;
   overflow-y: auto;
@@ -334,53 +172,52 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  scroll-behavior: smooth;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding-bottom: 90px; /* Space for fixed bottom bar */
 }
 
 .message-bubble {
-  max-width: 80%;
-  padding: 14px 18px;
-  border-radius: 18px;
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
   line-height: 1.5;
-  font-size: 0.95rem;
   word-break: break-word;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .message-bubble.user {
-  background: rgba(56, 118, 186, 0.35);
-  border: 1px solid rgba(140, 191, 232, 0.5);
-  color: #ffffff;
+  background: #3876ba;
+  color: #fff;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
-  box-shadow: 0 0 20px rgba(56, 118, 186, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .message-bubble.ai {
-  background: rgba(17, 24, 39, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #f3f4f6;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
   align-self: flex-start;
   border-bottom-left-radius: 4px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Typing Indicator Animation */
 .typing-bubble {
   display: flex;
-  gap: 6px;
   align-items: center;
-  padding: 16px 20px;
+  gap: 4px;
+  padding: 14px 18px;
 }
 
 .typing-bubble .dot {
-  width: 7px;
-  height: 7px;
-  background-color: #cbd5e1;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.6);
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
   animation: bounce 1.4s infinite ease-in-out both;
 }
 
@@ -392,24 +229,73 @@ body {
   40% { transform: scale(1.0); }
 }
 
+/* Bottom Input Bar */
 .bottom-input-bar {
-  padding: 16px 20px 20px;
-  background: rgba(17, 24, 39, 0.35);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: center;
+  box-sizing: border-box;
+  z-index: 20;
 }
 
 .fixed-width {
   width: 100%;
-  max-width: 720px;
+  max-width: 800px;
 }
 
-@media (max-width: 768px) {
-  .chat-screen {
-    height: 92vh;
-    width: 96%;
-    border-radius: 20px;
+/* ==========================================
+   Mobile Responsive Overrides
+   ========================================== */
+@media screen and (max-width: 768px) {
+  body, html {
+    overflow-x: hidden;
+  }
+
+  .home-title {
+    font-size: 26px;
+    padding: 0 15px;
+  }
+
+  .dancing-banner {
+    font-size: 11px;
+    padding: 6px 12px;
+    max-width: 85vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chat-header {
+    padding: 12px 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .chat-header div {
+    gap: 6px !important;
+  }
+
+  .message-bubble {
+    max-width: 88%;
+    font-size: 14px;
+  }
+
+  .messages-area {
+    padding: 15px 10px;
+  }
+
+  .bottom-input-bar {
+    padding: 10px 12px;
+  }
+
+  .search-bar-container {
+    padding: 0 15px;
   }
 }
